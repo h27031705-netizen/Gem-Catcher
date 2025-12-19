@@ -1,0 +1,80 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<conio.h>
+#include<windows.h>
+#define WIDTH 20
+#define HEIGHT 10
+#define MAX_MISSES 5
+void draw(int *player,int *gemX,int *gemY,int *score,int *misses)
+{
+    system("cls");
+    for(int y=0;y<HEIGHT;y++)
+        {
+        for(int x=0;x<WIDTH;x++)
+         {
+            if(y==HEIGHT-1&&x==*player)
+                printf("U");
+            else if(y== *gemY&&x==*gemX)
+                printf("*");
+            else
+                printf(".");
+        }
+        printf("\n");
+    }
+    printf("\nScore : %d",*score);
+    printf("\nMisses: %d / %d",*misses, MAX_MISSES);
+    printf("\nA = Left | D = Right | Q = Quit\n");
+}
+int main()
+ {
+    int playerPos=WIDTH/2;
+    int gemX;
+    int gemY=0;
+    int score=0;
+    int misses=0;
+    int gemsAppeared=0;
+    char input;
+    int fallDelay=450;
+    int minDelay =180;
+    int speedStep=30;
+    srand(time(NULL));
+    gemX=rand()%WIDTH;
+    while(1)
+        {
+        draw(&playerPos,&gemX,&gemY,&score,&misses);
+        if(kbhit())
+            {
+            input=getch();
+            if (input=='a'&&playerPos>0)
+                playerPos--;
+            else if(input=='d'&&playerPos<WIDTH-1)
+                playerPos++;
+            else if(input=='q')
+                break;
+        }
+        gemY++;
+        if (gemY>=HEIGHT-1)
+        {
+            gemsAppeared++;
+            if (gemX==playerPos)
+                score++;
+            else
+                misses++;
+            if (misses>=MAX_MISSES)
+                break;
+            gemY=0;
+            gemX=rand()%WIDTH;
+            if (gemsAppeared>=5&&gemsAppeared%5==0&&fallDelay>minDelay)
+             {
+                fallDelay-=speedStep;
+            }
+        }
+        Sleep(fallDelay);
+    }
+    system("cls");
+    printf("🎮 GAME OVER 🎮\n\n");
+    printf("Final Score : %d\n",score);
+    printf("Missed Gems : %d\n",misses);
+    return 0;
+}
